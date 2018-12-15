@@ -28,10 +28,33 @@ class Boid {
 			steering.limit(this.maxForce);
 		}
 		return steering;
-	}	
+	}
+
+	// Cohesion: steer to move toward the average position of local flockmates
+	cohere(boids) {
+		var perceptionRadius = 50; 
+		var steering = createVector(); 
+		var total = 0; 
+		for (var i=0; i<boids.length; i++) {
+			var other = boids[i];
+			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+			if (other !== this && d <= perceptionRadius) {
+				steering.add(other.position);
+				total++;
+			}
+		}
+		if (total > 0) {
+			steering.div(total);
+			steering.sub(this.position);
+			steering.setMag(this.maxSpeed);
+			steering.sub(this.velocity);
+			steering.limit(this.maxForce);
+		}
+		return steering;
+	}		
 
     flock(boids) {
-		var alignment = this.align(boids);
+		var alignment = this.cohere(boids);
         this.acceleration = alignment;
 	}
 	
