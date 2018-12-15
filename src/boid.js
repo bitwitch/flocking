@@ -4,7 +4,7 @@ class Boid {
 		this.velocity = p5.Vector.random2D(); 
 		this.velocity.setMag(random(1, 2));
 		this.acceleration = createVector();
-		this.maxForce = 0.015;
+		this.maxForce = 0.1;
 		this.maxSpeed = 4;
 	}
 
@@ -51,10 +51,35 @@ class Boid {
 			steering.limit(this.maxForce);
 		}
 		return steering;
-	}		
+	}
 
+	// Separation: steer to avoid crowding local flockmates
+	separate(boids) {
+		var perceptionRadius = 50; 
+		var steering = createVector(); 
+		var total = 0; 
+		for (var i=0; i<boids.length; i++) {
+			var other = boids[i];
+			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+			if (other !== this && d <= perceptionRadius) {
+				var repel = p5.Vector.sub(this.position, other.position);
+				// force inversely proportional to distance
+				repel.div(d);
+				steering.add(repel);
+				total++;
+			}
+		}
+		if (total > 0) {
+			steering.div(total);
+			steering.setMag(this.maxSpeed);
+			steering.sub(this.velocity);
+			steering.limit(this.maxForce);
+		}
+		return steering;
+	}
+	
     flock(boids) {
-		var alignment = this.cohere(boids);
+		var alignment = this.separate(boids);
         this.acceleration = alignment;
 	}
 	
