@@ -3,11 +3,11 @@ var alignSlider, cohesionSlider, separationSlider;
 
 
 function setup() {
-	createCanvas(640, 360);
+	createCanvas(window.innerWidth, window.innerHeight);
 	alignSlider = createSlider(0, 5, 1, 0.1);
 	cohesionSlider = createSlider(0, 5, 1, 0.1);
 	separationSlider = createSlider(0, 5, 1, 0.1);
-	for (var i=0; i<100; i++) {
+	for (var i=0; i<300; i++) {
 		boids.push(new Boid());
 	}
 }
@@ -23,4 +23,9 @@ function draw() {
 		boids[i].update();
 		boids[i].show();
 	}
+
+	// print FPS
+	fill(255);
+	stroke(0);
+	text("FPS: " + frameRate().toFixed(2), 10, height - 10);
 }
