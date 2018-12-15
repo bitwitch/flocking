@@ -79,8 +79,17 @@ class Boid {
 	}
 	
     flock(boids) {
-		var alignment = this.separate(boids);
-        this.acceleration = alignment;
+		var alignment  = this.align(boids);
+		var cohesion   = this.cohere(boids); 
+		var separation = this.separate(boids);
+
+		alignment.mult(alignSlider.value());
+		cohesion.mult(cohesionSlider.value());
+		separation.mult(separationSlider.value());
+
+        this.acceleration.add(alignment);
+        this.acceleration.add(cohesion);
+        this.acceleration.add(separation);
 	}
 	
 	screenWrap() {
@@ -100,7 +109,8 @@ class Boid {
 
 	update() {
 		this.position.add(this.velocity);
-		this.velocity.add(this.acceleration); 
+		this.velocity.add(this.acceleration);
+		this.acceleration.mult(0);
 	}
 
 	show() {

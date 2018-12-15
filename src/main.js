@@ -1,8 +1,12 @@
-const boids = []; 
+var boids = []; 
+var alignSlider, cohesionSlider, separationSlider;
 
 
 function setup() {
 	createCanvas(640, 360);
+	alignSlider = createSlider(0, 5, 1, 0.1);
+	cohesionSlider = createSlider(0, 5, 1, 0.1);
+	separationSlider = createSlider(0, 5, 1, 0.1);
 	for (var i=0; i<100; i++) {
 		boids.push(new Boid());
 	}
