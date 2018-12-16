@@ -2,7 +2,7 @@
  *   boid.js
  */
 
-var scene, camera, renderer, debugControls, boids;
+var scene, camera, renderer, boids, debugControls, stats;
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
@@ -15,22 +15,24 @@ function setup() {
 	boids = [];
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	camera.position.z = 700;
+	camera.position.z = 585;
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
-	debugControls = new THREE.OrbitControls(camera, renderer.domElement);
-
-	var axesHelper = new THREE.AxesHelper( 5 );
-	scene.add( axesHelper );
-
 	document.body.appendChild( renderer.domElement );
 	
-	for (var i=0; i<200; i++) {
+	for (var i=0; i<500; i++) {
 		var b = new Boid();
 		boids.push(b);
 		scene.add(b.mesh);
 	}
+	
+
+	debugControls = new THREE.OrbitControls(camera, renderer.domElement);
+
+	stats = new Stats();
+	stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+	document.body.appendChild( stats.dom );
 
 }
 
@@ -52,11 +54,14 @@ function draw() {
 
 function animate() {
 	requestAnimationFrame( animate );
-	
-	draw();
 
+	stats.begin();
+
+	draw();
 	debugControls.update();
 	renderer.render( scene, camera );
+
+	stats.end();
 }
 
 

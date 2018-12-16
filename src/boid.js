@@ -5,6 +5,10 @@
 var poopyTempWidth = 700; 
 var poopyTempHeight = 400;
 
+var X_AXIS = new THREE.Vector3(1,0,0);
+var Y_AXIS = new THREE.Vector3(0,1,0);
+var Z_AXIS = new THREE.Vector3(0,0,1);
+
 
 class Boid {
 	constructor() {
@@ -18,11 +22,13 @@ class Boid {
 		// set random position in window 
 		var x = Math.floor(Math.random() * ((window.innerWidth/2)+(window.innerWidth/2)+1)) - (window.innerWidth/2);
 		var y = Math.floor(Math.random() * ((window.innerHeight/2)+(window.innerHeight/2)+1)) - (window.innerHeight/2);
-
 		this.mesh.position.set(x, y, 0);
 
-		this.velocity = new THREE.Vector3(Math.random(), Math.random(), 0);
+		// set random velocity
+		this.velocity = new THREE.Vector3(2*(Math.random()-0.5), 2*(Math.random()-0.5), 0);
 		this.velocity.setLength(Math.random() + 1);
+		
+		// zero acceleration
 		this.acceleration = new THREE.Vector3();
 
 		this.maxForce = 0.1;
@@ -102,12 +108,7 @@ class Boid {
 		this.screenWrap();
 		this.mesh.position.add(this.velocity);
 		this.velocity.add(this.acceleration);
-		
-		// var x = this.mesh.position.x;
-		// var y = this.mesh.position.y;
-		// var angle = Math.asin(x / Math.sqrt(x*x + y*y));
-		// this.mesh.setRotationFromAxisAngle(new THREE.Vector3(0,1,0), angle);
-
+		this.mesh.quaternion.setFromUnitVectors(Y_AXIS, this.velocity.clone().normalize());
 		this.acceleration.set(0, 0, 0);
 	}
 }
