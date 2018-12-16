@@ -1,13 +1,15 @@
-var boids = []; 
-var alignSlider, cohesionSlider, separationSlider;
+var configSidebar    = document.getElementById('configSidebar');
+var alignSlider      = document.getElementById('alignSlider');
+var cohesionSlider   = document.getElementById('cohesionSlider');
+var separationSlider = document.getElementById('separationSlider');
 
+window.addEventListener('keypress', handlerToggleSidebar); 
+
+var boids = [];
 
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
-	alignSlider = createSlider(0, 5, 1, 0.1);
-	cohesionSlider = createSlider(0, 5, 1, 0.1);
-	separationSlider = createSlider(0, 5, 1, 0.1);
-	for (var i=0; i<300; i++) {
+	for (var i=0; i<200; i++) {
 		boids.push(new Boid());
 	}
 }
@@ -28,4 +30,10 @@ function draw() {
 	fill(255);
 	stroke(0);
 	text("FPS: " + frameRate().toFixed(2), 10, height - 10);
+}
+
+function handlerToggleSidebar(e) {
+	if (e.key == "`" || e.key == "~") {
+		configSidebar.classList.toggle('active');
+	}
 }

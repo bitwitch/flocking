@@ -7,85 +7,54 @@ class Boid {
 		this.maxForce = 0.1;
 		this.maxSpeed = 4;
 	}
-
-	// Alignment: steer towards the average heading of local flockmate
-	align(boids) {
-		var perceptionRadius = 50; 
-		var steering = createVector(); 
-		var total = 0; 
-		for (var i=0; i<boids.length; i++) {
-			var other = boids[i];
-			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-			if (other !== this && d <= perceptionRadius) {
-				steering.add(other.velocity);
-				total++;
-			}
-		}
-		if (total > 0) {
-			steering.div(total);
-			steering.setMag(this.maxSpeed);
-			steering.sub(this.velocity);
-			steering.limit(this.maxForce);
-		}
-		return steering;
-	}
-
-	// Cohesion: steer to move toward the average position of local flockmates
-	cohere(boids) {
-		var perceptionRadius = 50; 
-		var steering = createVector(); 
-		var total = 0; 
-		for (var i=0; i<boids.length; i++) {
-			var other = boids[i];
-			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-			if (other !== this && d <= perceptionRadius) {
-				steering.add(other.position);
-				total++;
-			}
-		}
-		if (total > 0) {
-			steering.div(total);
-			steering.sub(this.position);
-			steering.setMag(this.maxSpeed);
-			steering.sub(this.velocity);
-			steering.limit(this.maxForce);
-		}
-		return steering;
-	}
-
-	// Separation: steer to avoid crowding local flockmates
-	separate(boids) {
-		var perceptionRadius = 50; 
-		var steering = createVector(); 
-		var total = 0; 
-		for (var i=0; i<boids.length; i++) {
-			var other = boids[i];
-			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-			if (other !== this && d <= perceptionRadius) {
-				var repel = p5.Vector.sub(this.position, other.position);
-				// force inversely proportional to distance
-				repel.div(d);
-				steering.add(repel);
-				total++;
-			}
-		}
-		if (total > 0) {
-			steering.div(total);
-			steering.setMag(this.maxSpeed);
-			steering.sub(this.velocity);
-			steering.limit(this.maxForce);
-		}
-		return steering;
-	}
 	
     flock(boids) {
-		var alignment  = this.align(boids);
-		var cohesion   = this.cohere(boids); 
-		var separation = this.separate(boids);
+		var perceptionRadius = 50; 
+		var alignment  = createVector();
+		var cohesion   = createVector(); 
+		var separation = createVector(); 
+		var total      = 0; 
+		for (var i=0; i<boids.length; i++) {
+			var other = boids[i];
+			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+			if (other !== this && d <= perceptionRadius) {
+				// Alignment: steer towards the average heading of local flockmate
+				alignment.add(other.velocity);
 
-		alignment.mult(alignSlider.value());
-		cohesion.mult(cohesionSlider.value());
-		separation.mult(separationSlider.value());
+				// Cohesion: steer to move toward the average position of local flockmates
+				cohesion.add(other.position);
+
+                // Separation: steer to avoid crowding local flockmates
+				var sep = p5.Vector.sub(this.position, other.position);
+				// force inversely proportional to distance
+				sep.div(d);
+				separation.add(sep); 
+
+				total++;
+			}
+		}
+		if (total > 0) {
+			alignment.div(total);
+			alignment.setMag(this.maxSpeed);
+			alignment.sub(this.velocity);
+			alignment.limit(this.maxForce);
+			
+			cohesion.div(total);
+			cohesion.sub(this.position);
+			cohesion.setMag(this.maxSpeed);
+			cohesion.sub(this.velocity);
+			cohesion.limit(this.maxForce);
+			
+			separation.div(total);
+			separation.setMag(this.maxSpeed);
+			separation.sub(this.velocity);
+			separation.limit(this.maxForce);
+		}
+		
+		// scale by the config slider values
+		alignment.mult(parseInt(alignSlider.value));
+		cohesion.mult(parseInt(cohesionSlider.value));
+		separation.mult(parseInt(separationSlider.value));
 
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
