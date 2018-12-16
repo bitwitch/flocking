@@ -2,63 +2,87 @@
  *   config.js
  */
 
+var poopyTempWidth = 700; 
+var poopyTempHeight = 400;
+
+var X_AXIS = new THREE.Vector3(1,0,0);
+var Y_AXIS = new THREE.Vector3(0,1,0);
+var Z_AXIS = new THREE.Vector3(0,0,1);
+
+
 class Boid {
 	constructor() {
-		this.position = createVector(random(width), random(height));
-		this.velocity = p5.Vector.random2D(); 
-		this.velocity.setMag(random(1, 2));
-		this.acceleration = createVector();
+		this.width = 10;
+		this.height = 20;
+
+		this.geometry = new THREE.ConeGeometry( this.width/2, this.height, 3 );
+		this.material = new THREE.MeshBasicMaterial( {color: 0xCAB192} );
+		this.mesh = new THREE.Mesh( this.geometry, this.material );
+
+		// set random position in window 
+		var x = Math.floor(Math.random() * ((window.innerWidth/2)+(window.innerWidth/2)+1)) - (window.innerWidth/2);
+		var y = Math.floor(Math.random() * ((window.innerHeight/2)+(window.innerHeight/2)+1)) - (window.innerHeight/2);
+		this.mesh.position.set(x, y, 0);
+
+		// set random velocity
+		this.velocity = new THREE.Vector3(2*(Math.random()-0.5), 2*(Math.random()-0.5), 0);
+		this.velocity.setLength(Math.random() + 1);
+		
+		// zero acceleration
+		this.acceleration = new THREE.Vector3();
+
 		this.maxForce = 0.1;
 		this.maxSpeed = 4;
 	}
 	
     flock(boids) {
+		var alignment  = new THREE.Vector3();
+		var cohesion   = new THREE.Vector3(); 
+		var separation = new THREE.Vector3();
+		var total = 0; 
 		var perceptionRadius = parseInt(perceptionRadiusSlider.value);
-		var alignment  = createVector();
-		var cohesion   = createVector(); 
-		var separation = createVector(); 
-		var total      = 0; 
+
 		for (var i=0; i<boids.length; i++) {
 			var other = boids[i];
-			var d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+			var d = this.mesh.position.distanceTo(other.mesh.position); 
 			if (other !== this && d <= perceptionRadius) {
 				// Alignment: steer towards the average heading of local flockmate
 				alignment.add(other.velocity);
 
 				// Cohesion: steer to move toward the average position of local flockmates
-				cohesion.add(other.position);
+				cohesion.add(other.mesh.position);
 
                 // Separation: steer to avoid crowding local flockmates
-				var sep = p5.Vector.sub(this.position, other.position);
+				var sep = new THREE.Vector3().subVectors(this.mesh.position, other.mesh.position);
 				// force inversely proportional to distance
-				sep.div(d);
+				sep.divideScalar(d);
 				separation.add(sep); 
 
 				total++;
 			}
 		}
 		if (total > 0) {
-			alignment.div(total);
-			alignment.setMag(this.maxSpeed);
+			alignment.divideScalar(total);
+			alignment.setLength(this.maxSpeed);
 			alignment.sub(this.velocity);
-			alignment.limit(this.maxForce);
+			alignment.clampLength(0, this.maxForce);
 			
-			cohesion.div(total);
-			cohesion.sub(this.position);
-			cohesion.setMag(this.maxSpeed);
+			cohesion.divideScalar(total);
+			cohesion.sub(this.mesh.position);
+			cohesion.setLength(this.maxSpeed);
 			cohesion.sub(this.velocity);
-			cohesion.limit(this.maxForce);
+			cohesion.clampLength(0, this.maxForce);
 			
-			separation.div(total);
-			separation.setMag(this.maxSpeed);
+			separation.divideScalar(total);
+			separation.setLength(this.maxSpeed);
 			separation.sub(this.velocity);
-			separation.limit(this.maxForce);
+			separation.clampLength(0, this.maxForce);
 		}
 		
 		// scale by the config slider values
-		alignment.mult(parseInt(alignSlider.value));
-		cohesion.mult(parseInt(cohesionSlider.value));
-		separation.mult(parseInt(separationSlider.value));
+		alignment.multiplyScalar(parseInt( alignSlider.value ));
+		cohesion.multiplyScalar(parseInt( cohesionSlider.value ));
+		separation.multiplyScalar(parseInt( separationSlider.value ));
 
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
@@ -66,30 +90,25 @@ class Boid {
 	}
 	
 	screenWrap() {
-		if (this.position.x > width) {
-			this.position.x = 0;
-		} else if (this.position.x < 0) {
-			this.position.x = width;
+		if (this.mesh.position.x > window.innerWidth/2) {
+			this.mesh.position.x = -window.innerWidth/2;
+		} else if (this.mesh.position.x < -window.innerWidth/2) {
+			this.mesh.position.x = window.innerWidth/2;
 		} 
 
-		if (this.position.y > height) {
-			this.position.y = 0;
-		} else if (this.position.y < 0) {
-			this.position.y = height;
+		if (this.mesh.position.y > window.innerHeight/2) {
+			this.mesh.position.y = -window.innerHeight/2;
+		} else if (this.mesh.position.y < -window.innerHeight/2) {
+			this.mesh.position.y = window.innerHeight/2;
 		} 
 
 	}
 
 	update() {
 		this.screenWrap();
-		this.position.add(this.velocity);
+		this.mesh.position.add(this.velocity);
 		this.velocity.add(this.acceleration);
-		this.acceleration.mult(0);
-	}
-
-	show() {
-		strokeWeight(8); 
-		stroke(202, 177, 146);
-		point(this.position.x, this.position.y);
+		this.mesh.quaternion.setFromUnitVectors(Y_AXIS, this.velocity.clone().normalize());
+		this.acceleration.set(0, 0, 0);
 	}
 }

@@ -5,6 +5,7 @@ var separationSlider       = document.getElementById('separationSlider');
 var perceptionRadiusSlider = document.getElementById('perceptionRadiusSlider');
 var configSliders          = document.querySelectorAll('.config-slider');
 
+// TODO(shaw): some mobile UI for config? even support mobile?
 window.addEventListener('keypress', handlerToggleSidebar);
 
 for (var i=0; i<configSliders.length; i++) {
