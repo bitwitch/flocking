@@ -77,6 +77,7 @@ class Boid {
 	}
 
 	update() {
+		this.screenWrap();
 		this.position.add(this.velocity);
 		this.velocity.add(this.acceleration);
 		this.acceleration.mult(0);
