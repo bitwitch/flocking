@@ -2,6 +2,8 @@
 
 Simulation of flocking boids.
 
+[-- Demo --](https://bitwitch.github.io/flocking/)  
+
 **Usage**  
 Type ``` ~ ``` (tilde/backtick key) to toggle the config sidebar. You can adjust different sliders to tweak values that control the boids' flocking behavior.
 
