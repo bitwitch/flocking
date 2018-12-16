@@ -22,6 +22,18 @@ body {
 	transform: translateX(-100%);	
 }
 
-.config-sidebar input { 
+.config-sidebar label {
+	display: block;
+}
+
+.config-sidebar input {
+	width: 85%;
 	margin-bottom: 10px;
+}
+
+.slider-value {
+	display: inline-block;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
 }

@@ -1,3 +1,7 @@
+/* Dependencies
+ *   config.js
+ */
+
 class Boid {
 	constructor() {
 		this.position = createVector(random(width), random(height));
@@ -9,7 +13,7 @@ class Boid {
 	}
 	
     flock(boids) {
-		var perceptionRadius = 50; 
+		var perceptionRadius = parseInt(perceptionRadiusSlider.value);
 		var alignment  = createVector();
 		var cohesion   = createVector(); 
 		var separation = createVector(); 

@@ -1,9 +1,6 @@
-var configSidebar    = document.getElementById('configSidebar');
-var alignSlider      = document.getElementById('alignSlider');
-var cohesionSlider   = document.getElementById('cohesionSlider');
-var separationSlider = document.getElementById('separationSlider');
-
-window.addEventListener('keypress', handlerToggleSidebar); 
+/* Dependencies: 
+ *   boid.js
+ */
 
 var boids = [];
 
@@ -31,8 +28,3 @@ function draw() {
 	text("FPS: " + frameRate().toFixed(2), 10, height - 10);
 }
 
-function handlerToggleSidebar(e) {
-	if (e.key == "`" || e.key == "~") {
-		configSidebar.classList.toggle('active');
-	}
-}
