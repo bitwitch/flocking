@@ -50,10 +50,11 @@ class Boid {
 			separation.sub(this.velocity);
 			separation.limit(this.maxForce);
 		}
-
-		alignment.mult(alignSlider.value());
-		cohesion.mult(cohesionSlider.value());
-		separation.mult(separationSlider.value());
+		
+		// scale by the config slider values
+		alignment.mult(parseInt(alignSlider.value));
+		cohesion.mult(parseInt(cohesionSlider.value));
+		separation.mult(parseInt(separationSlider.value));
 
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
