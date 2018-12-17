@@ -28,7 +28,7 @@ function setup() {
 	}
 	
 
-	debugControls = new THREE.OrbitControls(camera, renderer.domElement);
+	// debugControls = new THREE.OrbitControls(camera, renderer.domElement);
 
 	stats = new Stats();
 	stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -45,11 +45,6 @@ function draw() {
 		boids[i].flock(boids);
 		boids[i].update();
 	}
-
-	// print FPS
-	// fill(255);
-	// stroke(0);
-	// text("FPS: " + frameRate().toFixed(2), 10, height - 10);
 }
 
 function animate() {
@@ -58,7 +53,7 @@ function animate() {
 	stats.begin();
 
 	draw();
-	debugControls.update();
+	// debugControls.update();
 	renderer.render( scene, camera );
 
 	stats.end();
