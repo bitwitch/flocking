@@ -14,20 +14,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
 function setup() {
 	boids = [];
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	camera.position.z = 585;
+	var aspect = window.innerWidth / window.innerHeight;
+	var cameraOffsetZ = 585; 
+    
+	camera = new THREE.PerspectiveCamera(
+		75,         // fov                                   
+		aspect,     // aspect ratio 
+		0.1,        // near 
+		1000        // far 
+	);
+	 
+	camera.position.z = cameraOffsetZ;	
+
+	// map world units to screen units so the plane that the boids 
+	// live on is always fullscreen
+	var vFOV = camera.fov * Math.PI / 180;
+	var planeHeight = 2 * Math.tan(vFOV / 2) * cameraOffsetZ;
+	var planeWidth  = planeHeight * aspect;
+
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	document.body.appendChild( renderer.domElement );
 	
 	for (var i=0; i<500; i++) {
-		var b = new Boid();
+		var b = new Boid(planeWidth, planeHeight);
 		boids.push(b);
 		scene.add(b.mesh);
 	}
 	
-
 	// debugControls = new THREE.OrbitControls(camera, renderer.domElement);
 
 	stats = new Stats();

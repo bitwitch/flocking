@@ -2,13 +2,9 @@
  *   config.js
  */
 
-var poopyTempWidth = 700; 
-var poopyTempHeight = 400;
-
 var X_AXIS = new THREE.Vector3(1,0,0);
 var Y_AXIS = new THREE.Vector3(0,1,0);
 var Z_AXIS = new THREE.Vector3(0,0,1);
-
 
 class Boid {
 	constructor() {
@@ -16,7 +12,7 @@ class Boid {
 		this.height = 20;
 
 		this.geometry = new THREE.ConeGeometry( this.width/2, this.height, 3 );
-		this.material = new THREE.MeshBasicMaterial( {color: 0xCAB192} );
+		this.material = new THREE.MeshBasicMaterial({ color: 0xCAB192 });
 		this.mesh = new THREE.Mesh( this.geometry, this.material );
 
 		// set random position in window 
@@ -54,8 +50,7 @@ class Boid {
 
                 // Separation: steer to avoid crowding local flockmates
 				var sep = new THREE.Vector3().subVectors(this.mesh.position, other.mesh.position);
-				// force inversely proportional to distance
-				sep.divideScalar(d);
+				sep.divideScalar(d); // force inversely proportional to distance
 				separation.add(sep); 
 
 				total++;
