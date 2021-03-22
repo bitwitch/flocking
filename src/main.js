@@ -29,7 +29,7 @@ function setup() {
 	// map world units to screen units so the plane that the boids 
 	// live on is always fullscreen
 	var vFOV = camera.fov * Math.PI / 180;
-	var planeHeight = 2 * Math.tan(vFOV / 2) * cameraOffsetZ;
+  var planeHeight = 2 * Math.tan(vFOV / 2) * cameraOffsetZ;
 	var planeWidth  = planeHeight * aspect;
 
 	renderer = new THREE.WebGLRenderer();
